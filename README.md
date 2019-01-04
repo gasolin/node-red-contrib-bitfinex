@@ -38,6 +38,10 @@ Or start Node-RED via `node-red`, then go `settings > Palette > Install` tab in 
 
 ![Imgur](https://i.imgur.com/MLS7sCq.gif)
 
+- You can visualize value and diagram with [Node-RED dashboard](https://flows.nodered.org/node/node-red-dashboard)
+
+![Imgur](https://i.imgur.com/mow1AUX.gif)
+
 ## Usage
 
 Refer official Bitfinex document https://docs.bitfinex.com/v2/docs for all APIs.
