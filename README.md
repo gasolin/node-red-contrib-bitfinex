@@ -2,11 +2,15 @@ Bitfinex Function Node for Node-RED
 
 [![npm version](https://img.shields.io/npm/v/node-red-contrib-bitfinex.svg)](https://www.npmjs.com/package/node-red-contrib-bitfinex)
 
+`node-red-contrib-bitfinex` make Bitfinex API very easy to access, you can visually show exchange data in node-red's dashboard, mashup with other services, or trade from weird objects around your house.
+
 ## Install
 
 ```
 npm install node-red-contrib-bitfinex
 ```
+
+Or go `settings > Palette > Install` tab in node-red and search `bitfinex` to install this module.
 
 ## Features
 
@@ -28,7 +32,7 @@ Bitfinex API credentials can be obtained from [https://www.bitfinex.com/api](htt
 
 The block is derived from [node-red's build-in function block](https://github.com/node-red/node-red/blob/master/nodes/core/core/80-function.js). And refer [node-red-contrib-aws-sdk](https://github.com/cuongquay/node-red-contrib-aws-sdk) for the credential block.
 
-The API is [Bitfinex's nodejs API library](https://github.com/bitfinexcom/bitfinex-api-node)
+The functions are build on top of [Bitfinex's nodejs API library](https://github.com/bitfinexcom/bitfinex-api-node)
 
 ## License
 
