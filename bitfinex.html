@@ -1,0 +1,213 @@
+<!-- =============================
+  BITFINEX CREDENTIALS NODE 
+============================= --> 
+<script type="text/x-red" data-template-name="bitfinex-credentials">
+  <div class="form-row">
+    <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+    <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-apiKey"><i class="fa fa-key"></i> <span data-i18n="bitfinex.label.apiKey"></span></label>
+    <input type="password" id="node-config-input-apiKey" data-i18n="[placeholder]bitfinex.placeholder.apiKey">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-apiSecret"><i class="fa fa-lock"></i> <span data-i18n="bitfinex.label.apiSecret"></span></label>
+    <input type="password" id="node-config-input-apiSecret" data-i18n="[placeholder]bitfinex.placeholder.apiSecret">
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="bitfinex-credentials">
+  <h1>Bitfinex Credentials</h1>
+  <p>API credential setup.</p>
+  <h3>Input</h3>
+  <dl class="message-properties">
+    <dt>
+      API key
+      <span class="property-type">string</span>
+    </dt>
+    <dd>Bitfinex account API key</dd>
+    <dt>
+      API secret
+      <span class="property-type">string</span>
+    </dt>
+    <dd>Bitfinex account API secret</dd>
+  </dl>
+  <h3>Details:</h3>
+  <p>Bitfinex API credentials can be obtained from <a href="https://www.bitfinex.com/api" target="_blank">https://www.bitfinex.com/api</a> after logging into your Bitfinex account.</p>
+  <p>API credential are saved as Node-RED credential nodes inside the (optionally) encrypted <code>flows_cred.json</code> file.</p>
+  <p><a href="https://nodered.org/docs/creating-nodes/credentials" target="_blank">More details here</a></p>
+</script>
+
+<script type="text/javascript">
+  function validateBitfinexNode() {
+    var credentials = RED.nodes.node(this.bitfinex);
+    return credentials !== null && credentials.valid === true;
+  }
+
+  RED.nodes.registerType('bitfinex-credentials', {
+    category: 'config',
+    defaults: {
+      name: {value: ""}
+    },
+    credentials: {
+      apiKey: {type: "password", required: true},
+      apiSecret: {type: "password", required: true}
+    },
+    inputs: 0,
+    outputs: 0,
+    label: function () {
+      return this.name || "bitfinex credentials";
+    }
+  });
+</script>
+
+<script type="text/x-red" data-template-name="Bitfinex function">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+    <input type="text" id="node-input-name" placeholder="Enter a name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-config"><span>Configuration</span></label>
+    <input type="text" id="node-input-config" placeholder="Enter configuration name">
+  </div>
+  <div class="form-row" style="margin-bottom: 0px;">
+    <label for="node-input-func"><i class="fa fa-wrench"></i> <span>Function</span></label>
+    <input type="hidden" id="node-input-func" autofocus="autofocus">
+    <input type="hidden" id="node-input-noerr">
+  </div>
+  <div class="form-row node-text-editor-row">
+    <div style="height: 250px;" class="node-text-editor" id="node-input-func-editor" ></div>
+  </div>
+  <div class="form-row">
+    <label for="node-input-outputs"><i class="fa fa-random"></i> <span>Outputs</span></label>
+    <input id="node-input-outputs" style="width: 60px; height: 1.7em;" value="1">
+  </div>
+  <div class="form-tips"><span>See the Info tab for help writing functions.</span></div>
+</script>
+
+<script type="text/x-red" data-help-name="Bitfinex function">
+  <p>A function block where you can write your own code to execute <a href="https://github.com/bitfinexcom/bitfinex-api-node" target="_blank">Bitfinex api nodejs library</a>.</p>
+  <p><em>bfx</em>, <em>rest</em>, <em>ws</em> are additional methods exposed to this function block.<br/>
+  <em>Example of using rest API:</em></p>
+  <p><code>
+    rest.tickers(['tETHUSD']).then(tickers => {<br/>
+    &nbsp;&nbsp;node.send({ payload: tickers[0] });<br/>
+    });<br/>
+  </code></p>
+  <p><em>Example of using websocket(ws) API:</em></p>
+  <p><code>
+    ws.on('open', () => {<br/>
+    &nbsp;&nbsp;ws.subscribeTicker('tETHUSD')<br/>
+    });<br/>
+    ws.onTicker({ symbol: 'tETHUSD' }, ticker => {<br/>
+    &nbsp;&nbsp;node.send({payload: ticker})<br/>
+    });<br/>
+    ws.open()<br/>  
+  </code></p>
+  <p><em>rest</em>, <em>ws</em> use APIv2 by default. You can customize api call via <em>bfx</em> method<br/>
+  <p><em>Example of using Bitfinex library(bfx) inside this function block:</em></p>
+  </p>
+  <p><code>
+    let rest1 = bfx.rest(1);<br/>
+    rest1.symbols().then(symbols => {<br/>
+    &nbsp;&nbsp;node.send({ payload: symbols });<br/>
+    });<br/>
+  </code></p>
+</script>
+
+<script type="text/javascript">
+  RED.nodes.registerType('Bitfinex function', {
+    color: "#FFCC66",
+    category : 'bitfinex',
+    defaults : {
+      name : {
+        value : ""
+      },
+      func : {
+        value : "\nreturn msg;"
+      },
+      outputs : {
+        value : 1
+      },
+      noerr : {
+        value : 0,
+        required : true,
+        validate : function(v) {
+          return ((!v) || (v === 0)) ? true : false;
+        }
+      },
+      config : {
+        type : "bitfinex-credentials",
+        required : true
+      }
+    },
+    inputs : 1,
+    outputs : 1,
+    align: "left",
+    icon : "function.png",
+    label : function() {
+      return this.name || "Bitfinex function";
+    },
+    oneditprepare : function() {
+      var that = this;
+      $("#node-input-outputs").spinner({
+        min : 1
+      });
+
+      function functionDialogResize() {
+        var rows = $("#dialog-form>div:not(.node-text-editor-row)");
+        var height = $("#dialog-form").height();
+        for (var i = 0; i < rows.size(); i++) {
+          height -= $(rows[i]).outerHeight(true);
+        }
+        var editorRow = $("#dialog-form>div.node-text-editor-row");
+        height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
+        $(".node-text-editor").css("height", height + "px");
+        that.editor.resize();
+      }
+
+
+      $("#dialog").on("dialogresize", functionDialogResize);
+      $("#dialog").one("dialogopen", function(ev) {
+        var size = $("#dialog").dialog('option', 'sizeCache-function');
+        if (size) {
+          $("#dialog").dialog('option', 'width', size.width);
+          $("#dialog").dialog('option', 'height', size.height);
+          functionDialogResize();
+        }
+      });
+      $("#dialog").one("dialogclose", function(ev, ui) {
+        var height = $("#dialog").dialog('option', 'height');
+        $("#dialog").off("dialogresize", functionDialogResize);
+      });
+
+      this.editor = RED.editor.createEditor({
+        id : 'node-input-func-editor',
+        mode : 'ace/mode/javascript',
+        value : $("#node-input-func").val()
+      });
+
+      RED.library.create({
+        url : "functions", // where to get the data from
+        type : "function", // the type of object the library is for
+        editor : this.editor, // the field name the main text body goes to
+        mode : "ace/mode/javascript",
+        fields : ['name', 'outputs']
+      });
+      this.editor.focus();
+    },
+    oneditsave : function() {
+      var annot = this.editor.getSession().getAnnotations();
+      this.noerr = 0;
+      $("#node-input-noerr").val(0);
+      for (var k = 0; k < annot.length; k++) {
+        if (annot[k].type === "error") {
+          $("#node-input-noerr").val(annot.length);
+          this.noerr = annot.length;
+        }
+      }
+      $("#node-input-func").val(this.editor.getValue());
+      delete this.editor;
+    }
+  });
+</script>

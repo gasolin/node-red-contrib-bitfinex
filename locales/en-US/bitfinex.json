@@ -1,0 +1,17 @@
+{
+    "bitfinex": {
+        "label": {
+            "credentials": "Credentials",
+            "apiKey": "API key",
+            "apiSecret": "API secret",
+        },
+        "placeholder": {
+            "apiKey": "API key",
+            "apiSecret": "API secret",
+        },
+        "errors": {
+            "missing-conf": "Missing bitfinex credentials configuration",
+            "invalid-api-cred": "Invalid API credentials"
+        }
+    }
+}
