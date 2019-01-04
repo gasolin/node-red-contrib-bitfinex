@@ -95,8 +95,8 @@ module.exports = function (RED) {
         sendResults(node, node.name, results)
       },
       bfx,
-      rest: bfx.rest(2),
-      ws: bfx.ws(2),
+      rest: bfx.rest(2, { transform: true }),
+      ws: bfx.ws(2, { transform: true }),
       console,
       util,
       Buffer,

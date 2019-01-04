@@ -91,7 +91,7 @@
   <em>Example of using rest API:</em></p>
   <p><code>
     rest.tickers(['tETHUSD']).then(tickers => {<br/>
-    &nbsp;&nbsp;node.send({ payload: tickers[0] });<br/>
+    &nbsp;&nbsp;node.send({ payload: tickers[0].lastPrice });<br/>
     });<br/>
   </code></p>
   <p><em>Example of using websocket(ws) API:</em></p>
@@ -100,9 +100,9 @@
     &nbsp;&nbsp;ws.subscribeTicker('tETHUSD')<br/>
     });<br/>
     ws.onTicker({ symbol: 'tETHUSD' }, ticker => {<br/>
-    &nbsp;&nbsp;node.send({payload: ticker})<br/>
+    &nbsp;&nbsp;node.send({payload: ticker.lastPrice})<br/>
     });<br/>
-    ws.open()<br/>  
+    ws.open()<br/>
   </code></p>
   <p><em>rest</em>, <em>ws</em> use APIv2 by default. You can customize api call via <em>bfx</em> method<br/>
   <p><em>Example of using Bitfinex library(bfx) inside this function block:</em></p>

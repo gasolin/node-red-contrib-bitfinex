@@ -16,7 +16,7 @@ Or go `settings > Palette > Install` tab in node-red and search `bitfinex` to in
 
 - A Function block where you can write your own code to execute [Bitfinex's nodejs API library](https://github.com/bitfinexcom/bitfinex-api-node)
 
-![Imgur](https://i.imgur.com/pvh4rqa.png)
+![Imgur](https://i.imgur.com/BDWezQx.png)
 
 - A credential configuration block
 
@@ -24,9 +24,10 @@ Or go `settings > Palette > Install` tab in node-red and search `bitfinex` to in
 
 - Installed Blocks are provide in `bitfinex` category
 - Guides and workable rest/websocket examples are provided in help tab
-- expose [bfx method](https://github.com/bitfinexcom/bitfinex-api-node/blob/master/examples/bfx.js) in function block that allows advanced usage.
 - expose `rest` method in function block to easy access [REST API](https://github.com/bitfinexcom/bitfinex-api-node/tree/master/examples/rest2) calls.
 - expose `ws` in function block to easy access [Websocket API](https://github.com/bitfinexcom/bitfinex-api-node/tree/master/examples/ws2) calls
+- expose `bfx` method in function block that allows [advanced usage](https://github.com/bitfinexcom/bitfinex-api-node/blob/master/examples/bfx.js).
+- `rest`, `ws` returned data are auto transformed to object based on [bfx-api-node-models](https://github.com/bitfinexcom/bfx-api-node-models)
 
 ## Usage
 
