@@ -6,11 +6,11 @@ Bitfinex Function Node for Node-RED
 
 ## Install
 
-```
-npm install node-red-contrib-bitfinex
-```
+1. Install Node-RED `npm install -g node-red`
+2. Go to Node-RED user directory (default: `~/.node-red`)
+3. `npm install node-red-contrib-bitfinex`
 
-Or go `settings > Palette > Install` tab in node-red and search `bitfinex` to install this module.
+Or start Node-RED via `node-red`, then go `settings > Palette > Install` tab in node-red and search `bitfinex` to install this module.
 
 ## Features
 
