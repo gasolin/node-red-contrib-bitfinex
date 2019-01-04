@@ -25,9 +25,18 @@ Or start Node-RED via `node-red`, then go `settings > Palette > Install` tab in 
 - Installed Blocks are provide in `bitfinex` category
 - Guides and workable rest/websocket examples are provided in help tab
 - expose `rest` method in function block to easy access [REST API](https://github.com/bitfinexcom/bitfinex-api-node/tree/master/examples/rest2) calls.
+
+![Imgur](https://i.imgur.com/ivFAJWH.gif)
+
 - expose `ws` in function block to easy access [Websocket API](https://github.com/bitfinexcom/bitfinex-api-node/tree/master/examples/ws2) calls
+
+![Imgur](https://i.imgur.com/ecJV6Io.gif)
+
 - expose `bfx` method in function block that allows [advanced usage](https://github.com/bitfinexcom/bitfinex-api-node/blob/master/examples/bfx.js).
 - `rest`, `ws` returned data are auto transformed to object based on [bfx-api-node-models](https://github.com/bitfinexcom/bfx-api-node-models)
+- The functoin block supports multiple outputs (ex: can subscribe multiple tickers and export at the same block)
+
+![Imgur](https://i.imgur.com/MLS7sCq.gif)
 
 ## Usage
 
