@@ -14,6 +14,8 @@ Or go `settings > Palette > Install` tab in node-red and search `bitfinex` to in
 
 ## Features
 
+![Imgur](https://i.imgur.com/pvh4rqa.png)
+
 - A Function block where you can write your own code to execute [Bitfinex's nodejs API library](https://github.com/bitfinexcom/bitfinex-api-node)
 - A credential configuration block
 - Installed Blocks are provide in `bitfinex` category
