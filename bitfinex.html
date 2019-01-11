@@ -116,6 +116,11 @@
 </script>
 
 <script type="text/javascript">
+  const snippet = `const targets = ['tETHUSD'];\n`
+  + `rest.tickers(targets).then(tickers => {\n`
+  + `  node.send({ payload: tickers[0].lastPrice });\n`
+  + `});`
+
   RED.nodes.registerType('Bitfinex function', {
     color: "#FFCC66",
     category : 'bitfinex',
@@ -124,7 +129,7 @@
         value : ""
       },
       func : {
-        value : "\nreturn msg;"
+        value : snippet
       },
       outputs : {
         value : 1
