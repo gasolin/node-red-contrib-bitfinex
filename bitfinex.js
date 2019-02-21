@@ -5,7 +5,7 @@ module.exports = function (RED) {
   var vm = require('vm')
   var BFX = require('bitfinex-api-node')
 
-  function BitfinexNode (config) {
+  function BitfinexConfigNode (config) {
     RED.nodes.createNode(this, config)
     var node = this
     node.status({})
@@ -19,7 +19,7 @@ module.exports = function (RED) {
     }
   }
 
-  RED.nodes.registerType('bitfinex-credentials', BitfinexNode, {
+  RED.nodes.registerType('bitfinex-credentials', BitfinexConfigNode, {
     credentials: {
       apiKey: { type: 'password' },
       apiSecret: { type: 'password' }
