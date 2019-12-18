@@ -26,7 +26,7 @@ module.exports = function (RED) {
     }
   })
 
-  // function node from https://github.com/node-red/node-red/blob/master/nodes/core/core/80-function.js
+  // function node from https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/nodes/core/function/10-function.js
   function sendResults (node, _msgid, msgs) {
     if (msgs == null) {
       return
@@ -67,6 +67,15 @@ module.exports = function (RED) {
     var node = this
     this.name = config.name
     this.func = config.func
+
+    var handleNodeDoneCall = true
+    // Check to see if the Function appears to call `node.done()`. If so,
+    // we will assume it is well written and does actually call node.done().
+    // Otherwise, we will call node.done() after the function returns regardless.
+    if (/node\.done\s*\(\s*\)/.test(this.func)) {
+      handleNodeDoneCall = false
+    }
+
     this.bfxConfig = RED.nodes.getNode(config.config)
     const { apiKey, apiSecret } = this.bfxConfig
     const bfx = this.bfxConfig
@@ -90,13 +99,13 @@ module.exports = function (RED) {
                            this.func + '\n' +
                           '})(msg);'
 
+    this.topic = config.topic
+    this.outstandingTimers = []
+    this.outstandingIntervals = []
     var sandbox = {
       callback: function (results) {
         sendResults(node, node.name, results)
       },
-      bfx,
-      rest: bfx.rest(2, { transform: true }),
-      ws: bfx.ws(2, { transform: true }),
       console,
       util,
       Buffer,
@@ -104,6 +113,9 @@ module.exports = function (RED) {
       RED: {
         util: RED.util
       },
+      bfx,
+      rest: bfx.rest(2, { transform: true }),
+      ws: bfx.ws(2, { transform: true }),
       __node__: {
         id: node.id,
         name: node.name,
@@ -174,6 +186,12 @@ module.exports = function (RED) {
           return node.context().global.keys.apply(node, arguments)
         }
       },
+      env: {
+        get: function (envVar) {
+          var flow = node._flow
+          return flow.getSetting(envVar)
+        }
+      },
       setTimeout: function () {
         var func = arguments[0]
         var timerId
@@ -218,6 +236,7 @@ module.exports = function (RED) {
         }
       }
     }
+    /* eslint-disable-next-line no-prototype-builtins */
     if (util.hasOwnProperty('promisify')) {
       sandbox.setTimeout[util.promisify.custom] = function (after, value) {
         return new Promise(function (resolve, reject) {
@@ -235,13 +254,15 @@ module.exports = function (RED) {
         // lineOffset: -11, // line number offset to be used for stack traces
         // columnOffset: 0, // column number offset to be used for stack traces
       })
-      this.on('input', function (msg) {
+      this.on('input', function (msg, send, done) {
         try {
           var start = process.hrtime()
           context.msg = msg
           node.script.runInContext(context)
           sendResults(node, msg._msgid, context.results)
-
+          if (handleNodeDoneCall) {
+            done()
+          }
           var duration = process.hrtime(start)
           var converted = Math.floor((duration[0] * 1e9 + duration[1]) / 10000) / 100
           node.metric('duration', msg, converted)
@@ -253,42 +274,49 @@ module.exports = function (RED) {
             })
           }
         } catch (err) {
-          // remove unwanted part
-          var index = err.stack.search(/\n\s*at ContextifyScript.Script.runInContext/)
-          err.stack = err.stack.slice(0, index).split('\n').slice(0, -1).join('\n')
-          var stack = err.stack.split(/\r?\n/)
+          /* eslint-disable-next-line no-prototype-builtins */
+          if ((typeof err === 'object') && err.hasOwnProperty('stack')) {
+            // remove unwanted part
+            var index = err.stack.search(/\n\s*at ContextifyScript.Script.runInContext/)
+            err.stack = err.stack.slice(0, index).split('\n').slice(0, -1).join('\n')
+            var stack = err.stack.split(/\r?\n/)
 
-          // store the error in msg to be used in flows
-          msg.error = err
+            // store the error in msg to be used in flows
+            msg.error = err
 
-          var line = 0
-          var errorMessage
-          if (stack && stack.length > 0) {
-            while (line < stack.length && stack[line].indexOf('ReferenceError') !== 0) {
-              line++
-            }
+            var line = 0
+            var errorMessage
+            if (stack && stack.length > 0) {
+              while (line < stack.length && stack[line].indexOf('ReferenceError') !== 0) {
+                line++
+              }
 
-            if (line < stack.length) {
-              errorMessage = stack[line]
-              var m = /:(\d+):(\d+)$/.exec(stack[line + 1])
-              if (m) {
-                var lineno = Number(m[1]) - 1
-                var cha = m[2]
-                errorMessage += ' (line ' + lineno + ', col ' + cha + ')'
+              if (line < stack.length) {
+                errorMessage = stack[line]
+                var m = /:(\d+):(\d+)$/.exec(stack[line + 1])
+                if (m) {
+                  var lineno = Number(m[1]) - 1
+                  var cha = m[2]
+                  errorMessage += ' (line ' + lineno + ', col ' + cha + ')'
+                }
               }
             }
+            if (!errorMessage) {
+              errorMessage = err.toString()
+            }
+            node.error(errorMessage, msg)
+          } else if (typeof err === 'string') {
+            done(err)
+          } else {
+            done(JSON.stringify(err))
           }
-          if (!errorMessage) {
-            errorMessage = err.toString()
-          }
-          node.error(errorMessage, msg)
         }
       })
       this.on('close', function () {
-        while (node.outstandingTimers && node.outstandingTimers.length > 0) {
+        while (node.outstandingTimers.length > 0) {
           clearTimeout(node.outstandingTimers.pop())
         }
-        while (node.outstandingIntervals && node.outstandingIntervals.length > 0) {
+        while (node.outstandingIntervals.length > 0) {
           clearInterval(node.outstandingIntervals.pop())
         }
         this.status({})

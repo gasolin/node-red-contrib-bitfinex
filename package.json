@@ -1,10 +1,10 @@
 {
  "name": "node-red-contrib-bitfinex",
- "version": "0.3.1",
+ "version": "0.4.0",
  "description": "Bitfinex API wrapper node for node-red",
  "author": "Fred Lin<gasolin+npm@gmail.com>",
  "dependencies": {
-  "bitfinex-api-node": "^2.0.4"
+  "bitfinex-api-node": "^3.0.2"
  },
  "license": "MIT",
  "keywords": [
